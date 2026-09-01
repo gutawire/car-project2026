@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WiFi Setup - Driver Watch</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>WiFi Setup</h1>
+  <p class="hint">
+    Join the car to a WiFi network. It keeps its own hotspot as a fallback,
+    so if this network isn't in range next time, reconnect your phone to
+    the car's hotspot to get back here.
+  </p>
+  <p class="hint">
+    <strong>Heads up:</strong> the Pi has one WiFi radio, so switching it to
+    the new network drops your phone's connection to this page immediately -
+    that's expected, not an error. Join your phone to the same network (or
+    the car's hotspot if the join failed) and reopen this address to check
+    the result.
+  </p>
+
+  <button id="scanBtn" class="btn">Scan for networks</button>
+  <ul id="networkList" class="network-list"></ul>
+
+  <form id="connectForm" class="connect-form" hidden>
+    <label for="ssid">Network name (SSID)</label>
+    <input id="ssid" name="ssid" type="text" autocomplete="off" required>
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="off">
+    <button type="submit" class="btn">Connect</button>
+  </form>
+
+  <div id="result" class="wifi-result"></div>
+
+  <p class="hint"><a href="/">&larr; Back to Driver Watch</a></p>
+
+  <script src="{{ url_for('static', filename='wifi.js') }}"></script>
+</body>
+</html>

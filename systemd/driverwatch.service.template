@@ -1,0 +1,16 @@
+[Unit]
+Description=Driver Watch drowsiness detection app
+After=NetworkManager.service
+Wants=NetworkManager.service
+
+[Service]
+Type=simple
+WorkingDirectory=__PROJECT_DIR__
+ExecStart=__PROJECT_DIR__/venv/bin/python app.py
+Restart=on-failure
+RestartSec=2
+# Root is required here for binding port 443 and for raw GPIO/I2C access.
+User=root
+
+[Install]
+WantedBy=multi-user.target

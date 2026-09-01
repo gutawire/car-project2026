@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+
+# Self-signed TLS cert/key - regenerate per device with the command in
+# README.md rather than committing a private key.
+certs/*.pem

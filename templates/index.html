@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Driver Watch</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Driver Watch</h1>
+
+  <video id="video" autoplay playsinline muted></video>
+  <canvas id="canvas" hidden></canvas>
+
+  <div id="status" class="status status-connecting">Connecting...</div>
+  <div id="eyeState" class="eye-state"></div>
+
+  <div class="test-panel">
+    <h2>Hardware Test (hold to drive)</h2>
+    <div class="dpad">
+      <button class="dpad-btn" data-action="forward">&#9650;</button>
+      <div class="dpad-mid">
+        <button class="dpad-btn" data-action="left">&#9664;</button>
+        <button class="dpad-btn dpad-stop" data-action="stop">&#9632;</button>
+        <button class="dpad-btn" data-action="right">&#9654;</button>
+      </div>
+      <button class="dpad-btn" data-action="backward">&#9660;</button>
+    </div>
+    <button id="buzzerTestBtn" class="buzzer-btn">Hold to test buzzer</button>
+  </div>
+
+  <p class="hint"><a href="/wifi">WiFi setup &rarr;</a></p>
+
+  <script src="{{ url_for('static', filename='socketio.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

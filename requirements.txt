@@ -1,0 +1,10 @@
+flask
+flask-socketio
+opencv-python==4.10.0.84
+numpy
+RPLCD
+pyOpenSSL
+simple-websocket
+eventlet
+gpiozero
+smbus2
