@@ -57,13 +57,25 @@ def backward() -> None:
 
 
 def left() -> None:
-    """Pivot left in place (left wheels back, right wheels forward)."""
-    _safe(lambda: _get_robot().left())
+    """Turn left: stop the left side, drive the right side forward.
+
+    This is a fixed 4-wheel (non-steering) chassis, not a tank chassis -
+    reversing one side to pivot in place binds the wheels, so turns are
+    done by stopping one side and driving the other instead."""
+    def _do():
+        robot = _get_robot()
+        robot.left_motor.stop()
+        robot.right_motor.forward()
+    _safe(_do)
 
 
 def right() -> None:
-    """Pivot right in place (right wheels back, left wheels forward)."""
-    _safe(lambda: _get_robot().right())
+    """Turn right: stop the right side, drive the left side forward."""
+    def _do():
+        robot = _get_robot()
+        robot.right_motor.stop()
+        robot.left_motor.forward()
+    _safe(_do)
 
 
 def stop() -> None:
