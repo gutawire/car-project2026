@@ -7,6 +7,7 @@ crashes the whole process with an illegal instruction (SIGILL) -- not a
 catchable Python exception. Haar cascades (bundled with OpenCV) are used
 instead: reliable to run, no native-crash risk, good enough for this demo.
 """
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
@@ -14,6 +15,14 @@ import cv2
 import numpy as np
 
 EyeState = Literal["open", "closed", "no_face"]
+Box = tuple[int, int, int, int]  # (x, y, w, h) in the input frame's own pixel space
+
+
+@dataclass
+class Detection:
+    state: EyeState
+    face: Box | None = None
+    eyes: list[Box] = field(default_factory=list)
 
 _CASCADE_DIR = Path(__file__).parent.parent / "assets" / "haarcascades"
 _face_cascade = cv2.CascadeClassifier(str(_CASCADE_DIR / "haarcascade_frontalface_default.xml"))
@@ -29,23 +38,35 @@ FACE_MIN_SIZE = (60, 60)
 EYE_MIN_SIZE = (20, 20)
 
 
-def eye_state(frame: np.ndarray) -> EyeState:
-    """Classify a BGR frame as "open", "closed", or "no_face"."""
+def detect(frame: np.ndarray) -> Detection:
+    """Classify a BGR frame and report the face/eye boxes found, in the
+    frame's own pixel coordinates - lets a caller draw them on the original
+    image without redoing the detection."""
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.equalizeHist(gray)
 
     faces = _face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5, minSize=FACE_MIN_SIZE)
     if len(faces) == 0:
-        return "no_face"
+        return Detection(state="no_face")
 
     # Largest detected face = the driver (closest to camera).
-    x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
+    x, y, w, h = (int(v) for v in max(faces, key=lambda f: f[2] * f[3]))
     # Eyes sit in the upper ~60% of the face box; excluding the lower part
     # (nose/mouth) cuts down false eye detections.
     roi = gray[y:y + int(h * 0.6), x:x + w]
 
     eyes = _eye_cascade.detectMultiScale(roi, scaleFactor=1.1, minNeighbors=6, minSize=EYE_MIN_SIZE)
-    return "open" if len(eyes) >= 1 else "closed"
+    # Eye boxes come back relative to the cropped ROI - shift by the face's
+    # own offset so callers get coordinates in the original frame.
+    absolute_eyes = [(x + int(ex), y + int(ey), int(ew), int(eh)) for ex, ey, ew, eh in eyes]
+
+    state: EyeState = "open" if len(eyes) >= 1 else "closed"
+    return Detection(state=state, face=(x, y, w, h), eyes=absolute_eyes)
+
+
+def eye_state(frame: np.ndarray) -> EyeState:
+    """Classify a BGR frame as "open", "closed", or "no_face"."""
+    return detect(frame).state
 
 
 if __name__ == "__main__":

@@ -9,11 +9,24 @@
 <body>
   <h1>Driver Watch</h1>
 
-  <video id="video" autoplay playsinline muted></video>
+  <div class="video-wrap">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="overlay"></canvas>
+    <div id="clock" class="video-clock"></div>
+  </div>
   <canvas id="canvas" hidden></canvas>
 
   <div id="status" class="status status-connecting">Connecting...</div>
+  <div id="warningBanner" class="warning-banner" hidden></div>
+  <button id="sessionBtn" class="btn session-btn session-start">Start Driving</button>
   <div id="eyeState" class="eye-state"></div>
+  <div id="actionInfo" class="action-info"></div>
+  <div id="hud" class="hud"></div>
+
+  <div class="terminal">
+    <div class="terminal-title">SYSTEM LOG</div>
+    <div id="terminalLog" class="terminal-log"></div>
+  </div>
 
   <div class="test-panel">
     <h2>Hardware Test (hold to drive)</h2>
